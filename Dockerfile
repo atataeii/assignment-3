@@ -1,13 +1,11 @@
 FROM php:8.2-apache
 
 RUN apt-get update && apt-get install -y \
-    git unzip zip libzip-dev libpng-dev libonig-dev libxml2-dev \
-    curl libcurl4-openssl-dev pkg-config libssl-dev \
-    libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql zip mbstring
+    curl git unzip zip libzip-dev libpng-dev libonig-dev libxml2-dev \
+    libcurl4-openssl-dev pkg-config libssl-dev libpq-dev gnupg
 
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get update && apt-get install -y nodejs
+    apt-get install -y nodejs
 
 RUN a2enmod rewrite
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
@@ -22,7 +20,8 @@ WORKDIR /var/www/html
 ENV NODE_ENV=production
 
 RUN composer install --no-dev --optimize-autoloader
-RUN npm install && npm run build
+RUN npm install
+RUN npm run build
 
 RUN chown -R www-data:www-data storage bootstrap/cache
 
