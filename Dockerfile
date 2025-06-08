@@ -21,6 +21,8 @@ RUN composer install --no-dev --optimize-autoloader
 
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-RUN php artisan migrate --force
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+CMD ["/start.sh"]
 
 EXPOSE 80
