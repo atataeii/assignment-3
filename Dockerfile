@@ -10,7 +10,6 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get update && apt-get install -y nodejs
 
 RUN a2enmod rewrite
-
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
 COPY . /var/www/html
@@ -20,8 +19,9 @@ RUN curl -sS https://getcomposer.org/installer | php && \
 
 WORKDIR /var/www/html
 
-RUN composer install --no-dev --optimize-autoloader
+ENV NODE_ENV=production
 
+RUN composer install --no-dev --optimize-autoloader
 RUN npm install && npm run build
 
 RUN chown -R www-data:www-data storage bootstrap/cache
